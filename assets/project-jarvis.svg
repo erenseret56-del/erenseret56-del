@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="232" viewBox="0 0 960 232" role="img" aria-labelledby="title">
+<title id="title">JARVIS — AI assistant project.</title>
+<defs><linearGradient id="bg"><stop stop-color="#0c1b29"/><stop offset="1" stop-color="#060c15"/></linearGradient></defs>
+<rect x="1" y="1" width="958" height="230" rx="14" fill="url(#bg)" stroke="#24394c"/>
+<g font-family="Consolas,Menlo,monospace"><path d="M1 40V15Q1 1 15 1H220" fill="none" stroke="#64edb4" stroke-width="2"/>
+<text x="30" y="37" fill="#64edb4" font-size="14">PROJECT / 04</text>
+<text x="925" y="37" text-anchor="end" fill="#7294af" font-size="13">ASSISTANT / INTERFACE</text>
+<text x="30" y="86" fill="#eef5fc" font-size="34" font-weight="700">JARVIS</text>
+<text x="30" y="124" fill="#b9c9dc" font-size="19">AI assistant project.</text>
+<path d="M30 148H930" stroke="#203448"/>
+<text x="900" y="107" fill="#55adff" font-size="42">↗</text><text x="30" y="180" fill="#8eb4d4" font-size="17">React / TypeScript / Three.js / Vite</text></g></svg>
