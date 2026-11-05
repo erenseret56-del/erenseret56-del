@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#030916" />
+    <title>Ruthvik / AI Core</title>
+    <style>
+      :root { color-scheme: dark; }
+      * { box-sizing: border-box; }
+      body { margin: 0; overflow: hidden; background: #030916; color: #ccefff; font: 12px/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+      canvas { display: block; width: 100vw; height: 100vh; }
+      .hud { position: fixed; inset: 0; pointer-events: none; padding: clamp(20px, 3vw, 48px); border: 1px solid rgba(78, 226, 255, .18); }
+      .hud::before, .hud::after { content: ""; position: absolute; width: 80px; height: 80px; border-color: #65efff; border-style: solid; opacity: .9; }
+      .hud::before { top: 20px; left: 20px; border-width: 2px 0 0 2px; }
+      .hud::after { right: 20px; bottom: 20px; border-width: 0 2px 2px 0; }
+      .label { letter-spacing: .18em; color: #7defff; text-shadow: 0 0 12px #1ee1ff; }
+      .top { display: flex; justify-content: space-between; }
+      .bottom { position: absolute; left: clamp(20px, 3vw, 48px); right: clamp(20px, 3vw, 48px); bottom: clamp(24px, 4vw, 52px); display: flex; justify-content: space-between; color: #71b8d6; }
+      #fallback { position: fixed; inset: 0; display: none; place-items: center; text-align: center; background: #030916; color: #bdf8ff; }
+      #fallback img { max-width: min(76vw, 578px); max-height: 72vh; filter: drop-shadow(0 0 28px rgba(62, 220, 255, .34)); }
+      #fallback strong { display: block; color: #6af4ff; font-size: 1.2rem; margin-bottom: .6rem; }
+      .hint { position: fixed; left: 50%; bottom: 8%; transform: translateX(-50%); letter-spacing: .12em; color: rgba(205, 246, 255, .62); }
+    </style>
+  </head>
+  <body>
+    <div class="hud"><div class="top"><span class="label">RUTHVIK / AI CORE</span><span class="label">SYSTEM / ONLINE</span></div><div class="bottom"><span>DRAG TO ROTATE</span><span>∞ / 3D DIGITAL TWIN</span></div></div>
+    <div class="hint">MOUSE / TOUCH — ROTATE CORE</div>
+    <div id="fallback"><div><img src="fallback.png" alt="Static rendering of a cyan holographic AI core" /><strong>AI CORE / STATIC FALLBACK</strong>Your browser does not support WebGL.</div></div>
+    <script type="module">
+      import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js';
+
+      const fallback = document.querySelector('#fallback');
+      let renderer;
+      try { renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' }); } catch { fallback.style.display = 'grid'; throw new Error('WebGL unavailable'); }
+      renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+      renderer.setSize(innerWidth, innerHeight);
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      renderer.toneMappingExposure = 1.35;
+      document.body.appendChild(renderer.domElement);
+
+      const scene = new THREE.Scene();
+      scene.fog = new THREE.FogExp2(0x030916, .055);
+      const camera = new THREE.PerspectiveCamera(40, innerWidth / innerHeight, .1, 100);
+      camera.position.set(0, -11.5, 3.2);
+      const rig = new THREE.Group(); scene.add(rig);
+      const core = new THREE.Group(); rig.add(core);
+      const metal = new THREE.MeshPhysicalMaterial({ color: 0x092638, metalness: .94, roughness: .18, clearcoat: .8 });
+      const blueMetal = new THREE.MeshPhysicalMaterial({ color: 0x086c9d, metalness: .76, roughness: .2, emissive: 0x003a6a, emissiveIntensity: .45 });
+      const glass = new THREE.MeshPhysicalMaterial({ color: 0x41dfff, metalness: .15, roughness: .06, transmission: .65, thickness: .25, transparent: true, opacity: .42 });
+      const energy = new THREE.MeshStandardMaterial({ color: 0x4decff, emissive: 0x0aa8ff, emissiveIntensity: 5, roughness: .18 });
+      const blue = new THREE.MeshStandardMaterial({ color: 0x2d6bff, emissive: 0x1037ff, emissiveIntensity: 2.2 });
+      const torus = (r, tube, material, rotation) => { const mesh = new THREE.Mesh(new THREE.TorusGeometry(r, tube, 18, 120), material); mesh.rotation.set(...rotation); core.add(mesh); return mesh; };
+      const outer = torus(3.05, .105, blueMetal, [1.18, 0, .12]);
+      const inner = torus(2.43, .07, metal, [.38, 1.04, 0]);
+      const dataRing = torus(2.75, .035, glass, [1.5, .12, 0]);
+      const scanRing = torus(1.7, .03, energy, [1.26, .16, 0]);
+      const sphere = new THREE.Mesh(new THREE.SphereGeometry(.83, 48, 32), glass); sphere.position.z = .15; core.add(sphere);
+      const nucleus = new THREE.Mesh(new THREE.IcosahedronGeometry(.45, 5), energy); nucleus.position.z = .15; core.add(nucleus);
+      const cageA = torus(.93, .03, blueMetal, [1.2, 0, 0]);
+      const cageB = torus(.93, .03, blueMetal, [.25, 1.18, 0]);
+      const platform = new THREE.Mesh(new THREE.CylinderGeometry(4.65, 4.65, .16, 96), new THREE.MeshStandardMaterial({ color: 0x01060d, metalness: .6, roughness: .28 })); platform.scale.y = .86; platform.position.z = -.65; core.add(platform);
+      for (let i = 0; i < 30; i++) { const a = i / 30 * Math.PI * 2; const tick = new THREE.Mesh(new THREE.BoxGeometry(.07,.28,.1), i % 4 ? blueMetal : energy); tick.position.set(3.05*Math.cos(a), 3.05*Math.sin(a), .06); tick.rotation.z = a + Math.PI/2; core.add(tick); }
+      const particles = new THREE.BufferGeometry(); const points = [];
+      for (let i = 0; i < 180; i++) { const a = i * 2.39996, r = 1.1 + (i % 14) * .23; points.push(r*Math.cos(a), r*Math.sin(a), -1.2 + (i % 18) * .15); }
+      particles.setAttribute('position', new THREE.Float32BufferAttribute(points, 3));
+      const dust = new THREE.Points(particles, new THREE.PointsMaterial({ color: 0x73f3ff, size: .04, transparent: true, opacity: .82, blending: THREE.AdditiveBlending })); core.add(dust);
+      scene.add(new THREE.HemisphereLight(0x1b88ff, 0x01030a, 1.1));
+      const key = new THREE.PointLight(0x36dbff, 120, 20, 2); key.position.set(3, -3, 5); scene.add(key);
+      const rim = new THREE.PointLight(0x1d4dff, 85, 18, 2); rim.position.set(-4, 2, 3); scene.add(rim);
+      const bounce = new THREE.PointLight(0xb9faff, 35, 8, 2); bounce.position.set(0, -1, 2); scene.add(bounce);
+      let targetX = 0, targetY = 0, drag = false, previous = null;
+      addEventListener('pointerdown', e => { drag = true; previous = e; });
+      addEventListener('pointerup', () => drag = false);
+      addEventListener('pointermove', e => { if (!drag) return; targetY += (e.clientX - previous.clientX) * .008; targetX += (e.clientY - previous.clientY) * .006; previous = e; });
+      addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); });
+      const clock = new THREE.Clock();
+      function animate() { const t = clock.getElapsedTime(); requestAnimationFrame(animate); outer.rotation.z += .004; inner.rotation.y -= .006; dataRing.rotation.z -= .009; scanRing.rotation.x += .012; cageA.rotation.z += .02; cageB.rotation.y -= .016; nucleus.scale.setScalar(.82 + Math.sin(t*2.2)*.14); dust.rotation.z -= .0015; core.rotation.x += (targetX - core.rotation.x) * .04; core.rotation.y += (targetY - core.rotation.y) * .04; rig.rotation.y = Math.sin(t*.22)*.08; camera.lookAt(0,0,.1); renderer.render(scene, camera); }
+      animate();
+    </script>
+  </body>
+</html>
