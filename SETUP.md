@@ -6,7 +6,7 @@ This is a standalone profile package. The neighboring Peoplix project was not mo
 
 On 6 November 2026, the public GitHub API returned 404 for the README of `erenseret56-del/erenseret56-del`. It was not available for inspection. The similarly named [erenseret-del repository](https://github.com/erenseret56-del/erenseret-del) contains only `# erenseret-del`. Do not rename or overwrite that repository as part of this setup.
 
-The hero uses a self-contained animated SVG with a JARVIS-inspired infinity core. It has no character artwork, external video, JavaScript, or WebGL dependency.
+The hero uses a Blender-rendered GIF of a JARVIS-inspired 3D AI core. It has no character artwork or external video dependency.
 
 Verified project sources:
 
@@ -27,9 +27,9 @@ The daily schedule is 00:17 UTC / 05:47 India time, subject to GitHub scheduling
 
 ## Updating hero motion
 
-The current hero is `assets/jarvis-infinity.svg`: an animated SVG with rotating HUD rings, a holographic infinity core, energy pulses, and particle movement. It is designed for GitHub's image rendering limits and loops without JavaScript.
+The current hero is `assets/jarvis-core.gif`: a 4-second seamless Blender/Eevee render with metallic gimbals, transmissive glass, a cyan energy core, moving scan rails and floating particle geometry. It is designed for GitHub's image rendering limits and loops automatically.
 
-To change the motion or colours, edit `assets/jarvis-infinity.svg`. SVG project cards can be rebuilt with `python scripts/build-cards.py`; keep their accessible descriptions in the README in sync.
+To regenerate the core, run Blender with `scripts/build-jarvis-core.py`, then composite the resulting frames into the GIF. The interactive Three.js experience is in `interactive/index.html`; it provides mouse rotation and a static fallback when WebGL is unavailable. SVG project cards can be rebuilt with `python scripts/build-cards.py`; keep their accessible descriptions in the README in sync.
 
 ## Inputs still needed
 

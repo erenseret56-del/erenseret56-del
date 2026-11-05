@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/jarvis-infinity.svg" width="100%" alt="Sai Ruthvik Reddy — Full Stack Developer. A cyan holographic infinity core rotates inside a futuristic AI terminal hero card." />
+  <img src="assets/jarvis-core.gif" width="100%" alt="Sai Ruthvik Reddy — Full Stack Developer. A Blender-rendered holographic AI core with independently rotating mechanical rings appears inside the terminal hero card." />
 </p>
 
 <p align="center">
