@@ -6,7 +6,7 @@ This is a standalone profile package. The neighboring Peoplix project was not mo
 
 On 6 November 2026, the public GitHub API returned 404 for the README of `erenseret56-del/erenseret56-del`. It was not available for inspection. The similarly named [erenseret-del repository](https://github.com/erenseret56-del/erenseret-del) contains only `# erenseret-del`. Do not rename or overwrite that repository as part of this setup.
 
-No Toji artwork or reference screenshot was available in the workspace. The hero is explicitly a placeholder, not an illustration of another character.
+No Toji artwork or reference screenshot was available in the workspace. The hero now uses the supplied animated video as a compact GitHub-compatible GIF; no fabricated character artwork is used.
 
 Verified project sources:
 
@@ -25,20 +25,18 @@ Verified project sources:
 
 The daily schedule is 00:17 UTC / 05:47 India time, subject to GitHub scheduling delays. Scheduled workflows must be on the default branch and may be disabled by GitHub after inactivity. Re-enable them in Actions if necessary. Branch rules must allow the workflow to write to `output`; no force push is needed.
 
-## Adding Toji
+## Updating hero motion
 
-1. Save the actual illustration as **`assets/toji-hero.png`**. Use full-body Toji Fushiguro in a combat-ready stance holding his katana, with a sharp silhouette, emerald rim light and subtle blue shadow lighting. Transparent PNG is ideal; keep the complete figure and blade within the canvas. Aim for approximately 800–1200 px tall and under 1 MB.
-2. From this package on Windows, run `powershell -NoProfile -File scripts/build-hero.ps1`. It fits the full image inside the existing terminal frame without cropping and writes `assets/hero.png`. It uses built-in System.Drawing; no package installation or online service is needed.
-3. Remove the README's **Artwork pending** notice and update the hero's alt text to describe the finished art. Commit both PNG files and the updated README normally.
+The current hero is `assets/hero.gif`: an 8.9-second, 8 fps looping GIF composited inside the terminal artwork panel. It was created from the supplied video and is approximately 2.8 MB. GitHub profile READMEs can animate GIF files but cannot play an MP4 inline.
 
-The placeholder remains usable until the illustration is supplied. No fabricated image URL is used. To change text or colors, edit the hero script and rebuild. SVG project cards can be rebuilt with `python scripts/build-cards.py`; keep their accessible descriptions in the README in sync.
+To switch back to static artwork, save it as `assets/toji-hero.png` and run `powershell -NoProfile -File scripts/build-hero.ps1`; update the README image source and its alt text at the same time. To change text or colors, edit the hero script and rebuild. SVG project cards can be rebuilt with `python scripts/build-cards.py`; keep their accessible descriptions in the README in sync.
 
 ## Inputs still needed
 
 | Item | Needed |
 | --- | --- |
 | Reference | Original screenshot, if matching its precise composition is desired |
-| Toji | Actual `assets/toji-hero.png` artwork |
+| Hero artwork | Optional replacement `assets/toji-hero.png` if you want static art instead of the current looping video |
 | ASTER | Repository URL, demo URL and actual project stack |
 | Peoplix | Repository URL, or confirmation it should remain private/unlinked |
 | Synthora | Preferred primary repository and live demo URL, if any |

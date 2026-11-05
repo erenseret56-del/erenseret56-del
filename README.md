@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/hero.png" width="100%" alt="Sai Ruthvik Reddy — Full Stack Developer. Midnight navy terminal with emerald accents; Toji Fushiguro artwork slot awaiting assets/toji-hero.png." />
+  <img src="assets/hero.gif" width="100%" alt="Sai Ruthvik Reddy — Full Stack Developer. A looping cinematic warrior sequence plays inside the terminal-inspired hero card." />
 </p>
 
 <p align="center">
@@ -8,8 +8,6 @@
   <a href="#04--selected-builds">BUILDS</a> ·
   <a href="#08--connect">CONNECT</a>
 </p>
-
-> **Artwork pending:** the hero currently contains a labeled placeholder. Full-body Toji Fushiguro artwork belongs at `assets/toji-hero.png`; see [artwork setup](SETUP.md#adding-toji).
 
 ## 01 / Identity
 
