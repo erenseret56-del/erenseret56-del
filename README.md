@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/hero.gif" width="100%" alt="Sai Ruthvik Reddy — Full Stack Developer. A looping cinematic warrior sequence plays inside the terminal-inspired hero card." />
+  <img src="assets/jarvis-infinity.svg" width="100%" alt="Sai Ruthvik Reddy — Full Stack Developer. A cyan holographic infinity core rotates inside a futuristic AI terminal hero card." />
 </p>
 
 <p align="center">

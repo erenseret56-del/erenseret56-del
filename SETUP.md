@@ -6,7 +6,7 @@ This is a standalone profile package. The neighboring Peoplix project was not mo
 
 On 6 November 2026, the public GitHub API returned 404 for the README of `erenseret56-del/erenseret56-del`. It was not available for inspection. The similarly named [erenseret-del repository](https://github.com/erenseret56-del/erenseret-del) contains only `# erenseret-del`. Do not rename or overwrite that repository as part of this setup.
 
-No Toji artwork or reference screenshot was available in the workspace. The hero now uses the supplied animated video as a compact GitHub-compatible GIF; no fabricated character artwork is used.
+The hero uses a self-contained animated SVG with a JARVIS-inspired infinity core. It has no character artwork, external video, JavaScript, or WebGL dependency.
 
 Verified project sources:
 
@@ -27,16 +27,16 @@ The daily schedule is 00:17 UTC / 05:47 India time, subject to GitHub scheduling
 
 ## Updating hero motion
 
-The current hero is `assets/hero.gif`: an 8.85-second, motion-interpolated 60 fps GIF composited inside the terminal artwork panel. It plays once, then holds its final frame. It was created from the supplied video and is approximately 6.3 MB. GitHub profile READMEs can animate GIF files but cannot play an MP4 inline.
+The current hero is `assets/jarvis-infinity.svg`: an animated SVG with rotating HUD rings, a holographic infinity core, energy pulses, and particle movement. It is designed for GitHub's image rendering limits and loops without JavaScript.
 
-To switch back to static artwork, save it as `assets/toji-hero.png` and run `powershell -NoProfile -File scripts/build-hero.ps1`; update the README image source and its alt text at the same time. To change text or colors, edit the hero script and rebuild. SVG project cards can be rebuilt with `python scripts/build-cards.py`; keep their accessible descriptions in the README in sync.
+To change the motion or colours, edit `assets/jarvis-infinity.svg`. SVG project cards can be rebuilt with `python scripts/build-cards.py`; keep their accessible descriptions in the README in sync.
 
 ## Inputs still needed
 
 | Item | Needed |
 | --- | --- |
 | Reference | Original screenshot, if matching its precise composition is desired |
-| Hero artwork | Optional replacement `assets/toji-hero.png` if you want static art instead of the current looping video |
+| Hero artwork | Optional custom infinity-core variant, if you want a different animation treatment |
 | ASTER | Repository URL, demo URL and actual project stack |
 | Peoplix | Repository URL, or confirmation it should remain private/unlinked |
 | Synthora | Preferred primary repository and live demo URL, if any |
