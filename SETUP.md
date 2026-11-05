@@ -27,7 +27,7 @@ The daily schedule is 00:17 UTC / 05:47 India time, subject to GitHub scheduling
 
 ## Updating hero motion
 
-The current hero is `assets/hero.gif`: an 8.9-second, 8 fps looping GIF composited inside the terminal artwork panel. It was created from the supplied video and is approximately 2.8 MB. GitHub profile READMEs can animate GIF files but cannot play an MP4 inline.
+The current hero is `assets/hero.gif`: an 8.85-second, motion-interpolated 60 fps looping GIF composited inside the terminal artwork panel. It was created from the supplied video and is approximately 6.3 MB. GitHub profile READMEs can animate GIF files but cannot play an MP4 inline.
 
 To switch back to static artwork, save it as `assets/toji-hero.png` and run `powershell -NoProfile -File scripts/build-hero.ps1`; update the README image source and its alt text at the same time. To change text or colors, edit the hero script and rebuild. SVG project cards can be rebuilt with `python scripts/build-cards.py`; keep their accessible descriptions in the README in sync.
 
