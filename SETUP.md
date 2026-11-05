@@ -29,7 +29,7 @@ The daily schedule is 00:17 UTC / 05:47 India time, subject to GitHub scheduling
 
 The current hero is `assets/jarvis-core.gif`: a 4-second seamless Blender/Eevee render with metallic gimbals, transmissive glass, a cyan energy core, moving scan rails and floating particle geometry. It is designed for GitHub's image rendering limits and loops automatically.
 
-To regenerate the core, run Blender with `scripts/build-jarvis-core.py`, then composite the resulting frames into the GIF. The interactive Three.js experience is in `interactive/index.html`; it provides mouse rotation and a static fallback when WebGL is unavailable. SVG project cards can be rebuilt with `python scripts/build-cards.py`; keep their accessible descriptions in the README in sync.
+To regenerate the core, run Blender with `scripts/build-jarvis-core.py`, then composite the resulting frames into the GIF. The interactive Three.js experience is in `interactive/index.html` and is live at `https://erenseret56-del.github.io/erenseret56-del/`; it provides mouse rotation and a static fallback when WebGL is unavailable. SVG project cards can be rebuilt with `python scripts/build-cards.py`; keep their accessible descriptions in the README in sync.
 
 ## Inputs still needed
 
