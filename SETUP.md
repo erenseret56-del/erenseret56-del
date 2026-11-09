@@ -27,7 +27,7 @@ The daily schedule is 00:17 UTC / 05:47 India time, subject to GitHub scheduling
 
 ## Updating hero motion
 
-The profile hero is `assets/jarvis-core.webp`: a seamless 4-second HUD loop with 240 frames. Thin scanning arcs, an inner iris and orbiting data points replace the former mechanical orb. `assets/jarvis-core.mp4` is the H.264 60 fps video; `assets/jarvis-poster.png` is the still alternative linked below the hero. Actual image playback cadence depends on the browser and device.
+The profile hero is `assets/jarvis-core.webp`: a seamless 4-second HUD loop with 240 frames. Thin scanning arcs, an inner iris and orbiting data points surround the supplied artwork in `assets/jarvis-center.jpg`. The artwork is fitted into a circular mask inside the iris; replace this source image and rebuild to update it. `assets/jarvis-core.mp4` is the H.264 60 fps video; `assets/jarvis-poster.png` is the still alternative linked below the hero. Actual image playback cadence depends on the browser and device.
 
 Rebuild from the repository root:
 

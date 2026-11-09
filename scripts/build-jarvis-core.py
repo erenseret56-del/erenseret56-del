@@ -2,7 +2,7 @@
 from pathlib import Path
 import math
 import subprocess
-from PIL import Image, ImageDraw, ImageFont, ImageFilter
+from PIL import Image, ImageDraw, ImageFont, ImageFilter, ImageOps
 
 ROOT = Path(__file__).resolve().parents[1]
 W, H, SCALE, FPS, COUNT = 1000, 560, 2, 60, 240
@@ -72,6 +72,19 @@ for a in [0,math.pi/2,math.pi,3*math.pi/2]:
 for side in [-1,1]:
     x=747+side*205
     line(bd,[(x,260),(x,298)],'#2b5360')
+
+
+# Keep the supplied artwork still inside the moving iris, with a soft circular edge.
+center_radius = 64
+center_size = center_radius * 2 * SCALE
+with Image.open(ROOT / 'assets' / 'jarvis-center.jpg') as source:
+    center_art = ImageOps.fit(ImageOps.exif_transpose(source).convert('RGB'),
+                              (center_size, center_size), Image.Resampling.LANCZOS)
+center_mask = Image.new('L', (center_size, center_size), 0)
+ImageDraw.Draw(center_mask).ellipse((2*SCALE, 2*SCALE, center_size-2*SCALE-1,
+                                   center_size-2*SCALE-1), fill=255)
+center_mask = center_mask.filter(ImageFilter.GaussianBlur(1*SCALE))
+base.paste(center_art, ((747-center_radius)*SCALE, (279-center_radius)*SCALE), center_mask)
 
 
 def render(index):
