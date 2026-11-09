@@ -52,8 +52,8 @@ Technologies I’ve worked with through hands-on, tool-assisted development. The
 | **Tools & platforms** | <img src="https://skillicons.dev/icons?i=git,github,vscode,figma,vercel,netlify&amp;theme=dark&amp;perline=3" alt="Git, GitHub, VS Code, Figma, Vercel, Netlify" width="146" /><br>Git · GitHub · VS Code<br>Figma · Vercel · Netlify |
 | **Mobile & 3D** | <img src="https://skillicons.dev/icons?i=react,threejs&amp;theme=dark" alt="React ecosystem and Three.js; Expo listed below" width="96" /><br>React Native · Expo · Three.js |
 
-| **AI, voice & automation** | Retell AI · ElevenLabs · Twilio · n8n<br>Conversational AI · Voice agents · Workflow automation |
-| **Cloud infrastructure** | Cloud deployment · Application infrastructure · Automation workflows |
+| **AI, voice & automation** | <img src="https://img.shields.io/badge/Retell_AI-121826?style=for-the-badge&amp;logoColor=white" alt="Retell AI" height="28" /> <img src="https://img.shields.io/badge/ElevenLabs-121826?style=for-the-badge&amp;logoColor=white" alt="ElevenLabs" height="28" /> <img src="https://img.shields.io/badge/Twilio-F22F46?style=for-the-badge&amp;logo=twilio&amp;logoColor=white" alt="Twilio" height="28" /> <img src="https://img.shields.io/badge/n8n-EA4B71?style=for-the-badge&amp;logo=n8n&amp;logoColor=white" alt="n8n" height="28" /><br>Conversational AI · Voice agents · Workflow automation |
+| **Cloud & hosting** | <img src="https://skillicons.dev/icons?i=aws&amp;theme=dark" alt="AWS" height="28" /> <img src="https://img.shields.io/badge/Hostinger_VPS-673DE6?style=for-the-badge&amp;logoColor=white" alt="Hostinger VPS" height="28" /> <img src="https://img.shields.io/badge/VPS-0B1320?style=for-the-badge&amp;logo=linux&amp;logoColor=white" alt="VPS hosting" height="28" /><br>AWS · Hostinger VPS · Cloud deployment · Application infrastructure |
 
 ## 04 / Selected builds
 
