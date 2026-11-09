@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="assets/jarvis-core.gif" width="100%" alt="Sai Ruthvik Reddy — Full Stack Developer. A Blender-rendered holographic AI core with independently rotating mechanical rings appears inside the terminal hero card." />
+  <img src="assets/jarvis-core.webp" width="100%" alt="Sai Ruthvik Reddy — Full Stack Developer. A cinematic cyan HUD with fine concentric scan rings and a seamless 60 fps animation." />
 </p>
 
-<p align="center"><a href="https://erenseret56-del.github.io/erenseret56-del/">Launch the interactive AI core ↗</a></p>
+<p align="center"><a href="assets/jarvis-core.mp4">Watch the 60 fps HUD loop &rarr;</a> &middot; <a href="assets/jarvis-poster.png">View the still image &rarr;</a></p>
 
 <p align="center">
   <a href="#01--identity">IDENTITY</a> ·

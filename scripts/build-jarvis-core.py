@@ -1,197 +1,127 @@
-"""Render a seamless Blender/Eevee holographic AI-core loop for the profile hero."""
+﻿"""Render the profile HUD: Pillow + FFmpeg, 240 frames / 4 seconds / 60 fps."""
 from pathlib import Path
 import math
-import bpy
-from mathutils import Vector
+import subprocess
+from PIL import Image, ImageDraw, ImageFont, ImageFilter
 
 ROOT = Path(__file__).resolve().parents[1]
-FRAMES = ROOT / "assets" / "jarvis-frames"
-FRAMES.mkdir(parents=True, exist_ok=True)
-FPS, FRAME_END = 15, 60
+W, H, SCALE, FPS, COUNT = 1000, 560, 2, 60, 240
+CYAN, WHITE, MUTED = '#75e6ed', '#e0edf0', '#6e929f'
 
-for block in bpy.data.objects:
-    bpy.data.objects.remove(block, do_unlink=True)
-for collection in (bpy.data.materials, bpy.data.cameras, bpy.data.lights):
-    pass
+def font(size, mono=False):
+    names = (['C:/Windows/Fonts/consola.ttf', '/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf'] if mono else
+             ['C:/Windows/Fonts/segoeuil.ttf', '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf'])
+    for name in names:
+        if Path(name).exists():
+            return ImageFont.truetype(name, size * SCALE)
+    raise RuntimeError('Install DejaVu Sans or Segoe UI fonts to render the hero.')
 
-scene = bpy.context.scene
-scene.render.engine = "BLENDER_EEVEE"
-scene.render.resolution_x = 578
-scene.render.resolution_y = 620
-scene.render.resolution_percentage = 100
-scene.render.image_settings.file_format = "PNG"
-scene.render.image_settings.color_mode = "RGBA"
-scene.render.fps = FPS
-scene.frame_start, scene.frame_end = 1, FRAME_END
-scene.render.film_transparent = False
-scene.world.color = (0.002, 0.006, 0.015)
-scene.world.use_nodes = True
-scene.world.node_tree.nodes["Background"].inputs["Color"].default_value = (0.001, 0.005, 0.018, 1)
-scene.world.node_tree.nodes["Background"].inputs["Strength"].default_value = .08
-scene.view_settings.look = "AgX - Medium High Contrast"
+FONTS = {(s, m): font(s, m) for s, m in [(10,True),(11,True),(12,True),(14,True),(18,False),(48,False),(56,False)]}
 
-def material(name, color, metallic=0, roughness=.35, emission=None, strength=0, transmission=0, alpha=1):
-    mat = bpy.data.materials.new(name)
-    mat.use_nodes = True
-    bsdf = mat.node_tree.nodes.get("Principled BSDF")
-    bsdf.inputs["Base Color"].default_value = (*color, alpha)
-    bsdf.inputs["Metallic"].default_value = metallic
-    bsdf.inputs["Roughness"].default_value = roughness
-    if emission:
-        bsdf.inputs["Emission Color"].default_value = (*emission, 1)
-        bsdf.inputs["Emission Strength"].default_value = strength
-    if transmission:
-        bsdf.inputs["Transmission Weight"].default_value = transmission
-        bsdf.inputs["Alpha"].default_value = alpha
-        mat.surface_render_method = "DITHERED"
-    return mat
+def line(d, points, fill, width=1):
+    d.line([(int(x*SCALE),int(y*SCALE)) for x,y in points], fill=fill, width=max(1,round(width*SCALE)))
 
-metal = material("Titanium alloy", (0.025, .07, .11), .92, .19)
-metal_lit = material("Blue anodized metal", (.015, .13, .22), .8, .22, (.02, .18, .35), .35)
-glass = material("Ionized glass", (.02, .23, .36), .22, .09, (.01, .20, .38), .4, .58, .22)
-cyan = material("Cyan energy", (.01, .35, .6), .1, .16, (.02, .65, 1), 8)
-blue = material("Blue energy", (.015, .08, .7), .05, .22, (.04, .15, 1), 5)
-dark = material("Panel black", (.002, .008, .018), .2, .28)
+def text(d, xy, value, size=11, fill=MUTED, mono=True):
+    d.text((xy[0]*SCALE,xy[1]*SCALE), value, font=FONTS[size,mono], fill=fill)
 
-def smooth(obj):
-    if hasattr(obj.data, "polygons"):
-        for p in obj.data.polygons:
-            p.use_smooth = True
+def arc(d, r, start, end, fill, width=1, center=(747,279)):
+    x,y=center
+    d.arc(tuple(round(v*SCALE) for v in (x-r,y-r,x+r,y+r)), start, end, fill=fill, width=max(1,round(width*SCALE)))
 
-def torus(name, major, minor, mat, rotation=(0,0,0), segments=96, minor_segments=16):
-    bpy.ops.mesh.primitive_torus_add(major_radius=major, minor_radius=minor, major_segments=segments, minor_segments=minor_segments, location=(0,0,0), rotation=rotation)
-    obj = bpy.context.object
-    obj.name = name
-    obj.data.materials.append(mat)
-    smooth(obj)
-    return obj
+def polar(r,a):
+    return (747+r*math.cos(a),279+r*math.sin(a))
 
-def cylinder(name, radius, depth, mat, z=0, vertices=96):
-    bpy.ops.mesh.primitive_cylinder_add(vertices=vertices, radius=radius, depth=depth, location=(0,0,z))
-    obj = bpy.context.object
-    obj.name = name
-    obj.data.materials.append(mat)
-    bevel = obj.modifiers.new("machined bevel", "BEVEL")
-    bevel.width, bevel.segments = .035, 3
-    return obj
+base = Image.new('RGB',(W*SCALE,H*SCALE),'#050a10')
+bd=ImageDraw.Draw(base)
+# Subtle radial illumination, integrated into the panel instead of a black viewport.
+for r in range(290,0,-1):
+    strength=(1-r/290)**2
+    c=(5,10+int(10*strength),16+int(15*strength))
+    bd.ellipse(((747-r)*SCALE,(279-r)*SCALE,(747+r)*SCALE,(279+r)*SCALE), fill=c)
+for x in range(525,980,24):
+    for y in range(70,495,24):
+        bd.point((x*SCALE,y*SCALE),fill='#20333d')
+line(bd,[(28,49),(972,49)],'#20313c')
+line(bd,[(28,507),(972,507)],'#20313c')
+text(bd,(32,20),'R / R',12,CYAN)
+text(bd,(103,21),'PERSONAL SYSTEM  /  SAI RUTHVIK',10)
+text(bd,(813,21),'PORTFOLIO     /  01',10)
+text(bd,(40,107),'DEVELOPER  /  DESIGNER  /  BUILDER',11,CYAN)
+line(bd,[(40,145),(76,145)],CYAN,2)
+text(bd,(37,164),'SAI RUTHVIK',48,WHITE,False)
+text(bd,(37,217),'REDDY',56,WHITE,False)
+text(bd,(40,309),'Full Stack Developer',18,WHITE,False)
+text(bd,(40,341),'UI/UX ENTHUSIAST  /  AI INTERFACES',11)
+text(bd,(40,420),'Build with intent.',18,WHITE,False)
+text(bd,(40,453),'HYDERABAD, INDIA  /  @erenseret56-del',10)
+text(bd,(32,527),'01 / IDENTITY',10,CYAN)
+text(bd,(210,527),'02 / TOOLKIT',10)
+text(bd,(380,527),'03 / BUILDS',10)
+text(bd,(788,527),'FOCUS > FRICTION',10,CYAN)
+text(bd,(568,76),'NEURAL INTERFACE',10,CYAN)
+text(bd,(872,76),'SYS.01',10)
+text(bd,(575,465),'COGNITIVE ENGINE',10)
+text(bd,(856,465),'ACTIVE',10,CYAN)
+for r in [84,114,150,177,193]:
+    arc(bd,r,0,360,'#17313c',.6)
+for i in range(120):
+    a=math.tau*i/120
+    line(bd,[polar(182 if i%5 else 178,a),polar(187,a)], '#3e626e' if i%5 else '#85bbc6',.6)
+for a in [0,math.pi/2,math.pi,3*math.pi/2]:
+    line(bd,[polar(199,a),polar(209,a)],'#5a8895')
+for side in [-1,1]:
+    x=747+side*205
+    line(bd,[(x,260),(x,298)],'#2b5360')
+text(bd,(718,261),'J.A.R.V.I.S',10,WHITE)
+text(bd,(722,281),'CORE / 01',10,CYAN)
 
-def key_rotate(obj, axis, turns, phase=0):
-    obj.rotation_euler[axis] = phase
-    obj.keyframe_insert("rotation_euler", index=axis, frame=1)
-    obj.rotation_euler[axis] = phase + math.tau * turns
-    obj.keyframe_insert("rotation_euler", index=axis, frame=FRAME_END)
 
-def orbit_marker(radius, angle, z, size, mat):
-    bpy.ops.mesh.primitive_cube_add(location=(radius * math.cos(angle), radius * math.sin(angle), z))
-    obj = bpy.context.object
-    obj.name = "rotor tick"
-    obj.scale = (.035, .14, .055)
-    obj.rotation_euler = (0, 0, angle + math.pi / 2)
-    obj.data.materials.append(mat)
-    bevel = obj.modifiers.new("micro bevel", "BEVEL")
-    bevel.width, bevel.segments = .025, 2
-    return obj
+def render(index):
+    t=index/COUNT
+    im=base.copy()
+    glow=Image.new('RGB',im.size)
+    gd=ImageDraw.Draw(glow)
+    d=ImageDraw.Draw(im)
+    for r,start,span,turns,width in [(168,15,72,1,2),(159,190,112,-1,1),(141,45,46,-1,3),(130,260,84,1,1),(103,0,90,2,1),(94,180,42,-2,2)]:
+        a=start+t*360*turns
+        arc(d,r,a,a+span,CYAN,width)
+        arc(gd,r,a,a+span,'#237b87',width*2)
+        arc(d,r,a+180,a+180+span*.48,'#347885',width)
+    # A finely segmented inner iris, with a circulating brightness envelope.
+    for i in range(72):
+        a=i*5
+        v=(.5+.5*math.cos(math.radians(a)-t*math.tau))**6
+        c=(int(30+90*v),int(68+150*v),int(80+150*v))
+        arc(d,73,a,a+2,c,4)
+    for i in range(48):
+        a=math.tau*i/48
+        r=120+4*math.sin(a*6+t*math.tau)
+        line(d,[polar(r,a),polar(r+3,a)],'#49818f',.7)
+    # Sparse data points sweep around the outer track.
+    for i in range(6):
+        a=t*math.tau+i*math.tau/6
+        x,y=polar(193,a)
+        d.ellipse(((x-1)*SCALE,(y-1)*SCALE,(x+1)*SCALE,(y+1)*SCALE),fill=WHITE)
+    from PIL import ImageChops
+    im=ImageChops.add(im,glow.filter(ImageFilter.GaussianBlur(5*SCALE)))
+    return im.resize((W,H),Image.Resampling.LANCZOS)
 
-# Back panel and emission halo form the lab-projected volume behind the physical assembly.
-panel = cylinder("recessed holo chamber", 4.7, .16, dark, z=-.58)
-panel.scale.y = .88
-halo = torus("volumetric halo", 3.48, .045, blue, rotation=(0,0,0), segments=128, minor_segments=10)
-halo.scale.y = .84
-halo.location.z = -.42
-
-outer = torus("outer gimbal", 3.05, .105, metal_lit, rotation=(math.radians(68), 0, math.radians(8)))
-inner = torus("inner gimbal", 2.42, .075, metal, rotation=(math.radians(22), math.radians(64), 0))
-glass_ring = torus("transparent data ring", 2.73, .034, glass, rotation=(math.radians(86), math.radians(6), 0))
-scan_ring = torus("scanning ring", 1.72, .035, cyan, rotation=(math.radians(76), math.radians(12), 0))
-key_rotate(outer, 2, 1.0)
-key_rotate(inner, 1, -1.55, .3)
-key_rotate(glass_ring, 2, -2.2)
-key_rotate(scan_ring, 0, 2.8, .5)
-
-# Mechanical tick arrays create readable depth at small GIF sizes.
-tick_group = bpy.data.objects.new("outer rotating indicators", None)
-bpy.context.collection.objects.link(tick_group)
-for i in range(28):
-    tick = orbit_marker(3.05, i * math.tau / 28, .05, .035, metal_lit if i % 4 else cyan)
-    tick.parent = tick_group
-key_rotate(tick_group, 2, 1.0)
-
-inner_ticks = bpy.data.objects.new("inner rotating indicators", None)
-bpy.context.collection.objects.link(inner_ticks)
-for i in range(18):
-    tick = orbit_marker(1.7, i * math.tau / 18, .12, .03, cyan if i % 3 else blue)
-    tick.parent = inner_ticks
-key_rotate(inner_ticks, 2, -2.5)
-
-# Central energy assembly: glass shell, metallic cage and emissive core.
-bpy.ops.mesh.primitive_uv_sphere_add(segments=64, ring_count=32, location=(0,0,.15), scale=(.82,.82,.82))
-shell = bpy.context.object
-shell.name = "refractive holographic shell"
-shell.data.materials.append(glass)
-smooth(shell)
-bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=4, radius=.43, location=(0,0,.15))
-core = bpy.context.object
-core.name = "pulsing energy core"
-core.data.materials.append(cyan)
-smooth(core)
-core.scale = (.78,.78,.78)
-core.keyframe_insert("scale", frame=1)
-core.scale = (1.05,1.05,1.05)
-core.keyframe_insert("scale", frame=31)
-core.scale = (.78,.78,.78)
-core.keyframe_insert("scale", frame=FRAME_END)
-
-cage = torus("core cage A", .93, .035, metal_lit, rotation=(math.radians(70), 0, 0))
-cage_b = torus("core cage B", .93, .035, metal_lit, rotation=(math.radians(12), math.radians(72), 0))
-key_rotate(cage, 2, 3)
-key_rotate(cage_b, 1, -2)
-
-# Light columns and particles use true 3D emissive mesh elements.
-for angle in (0, math.pi/2, math.pi, 3*math.pi/2):
-    bpy.ops.mesh.primitive_cylinder_add(vertices=16, radius=.022, depth=4.8, location=(0,0,.28), rotation=(math.pi/2,0,angle))
-    beam = bpy.context.object
-    beam.name = "volumetric scan beam"
-    beam.data.materials.append(blue)
-    beam.keyframe_insert("rotation_euler", index=2, frame=1)
-    beam.rotation_euler.z += math.tau
-    beam.keyframe_insert("rotation_euler", index=2, frame=FRAME_END)
-
-for i in range(70):
-    angle = i * 2.399963229728653
-    radius = 1.05 + (i % 10) * .23
-    z = -1.0 + (i % 11) * .19
-    bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=1, radius=.014 + (i % 3)*.007, location=(radius*math.cos(angle), radius*math.sin(angle), z))
-    particle = bpy.context.object
-    particle.name = "floating data particle"
-    particle.data.materials.append(cyan if i % 4 else blue)
-    original_z = particle.location.z
-    particle.keyframe_insert("location", frame=1)
-    particle.location.z += .18 + (i % 5)*.05
-    particle.rotation_euler.z += .2
-    particle.keyframe_insert("location", frame=31)
-    particle.location.z = original_z
-    particle.keyframe_insert("location", frame=FRAME_END)
-
-# Cinematic lighting with cyan rim lights, a cool key, and a soft back glow.
-def point(name, location, energy, color, radius):
-    bpy.ops.object.light_add(type="POINT", location=location)
-    light = bpy.context.object
-    light.name = name
-    light.data.energy, light.data.color, light.data.shadow_soft_size = energy, color, radius
-    return light
-point("cyan key", (2.8,-3.2,4.8), 920, (.10,.68,1), 2.2)
-point("blue rim", (-3.5,1.8,2.2), 760, (.04,.18,1), 2.0)
-point("white core bounce", (0,-.8,1.8), 420, (.55,.95,1), 1.4)
-
-bpy.ops.object.camera_add(location=(0,-11.8,2.6))
-camera = bpy.context.object
-camera.data.lens = 52
-scene.camera = camera
-target = Vector((0,0,.1))
-camera.rotation_euler = (target - camera.location).to_track_quat('-Z','Y').to_euler()
-
-for frame in range(1, FRAME_END + 1):
-    scene.frame_set(frame)
-    scene.render.filepath = str(FRAMES / f"core_{frame:03d}.png")
-    bpy.ops.render.render(write_still=True)
-print(f"Rendered {FRAME_END} Blender frames to {FRAMES}")
+if __name__=='__main__':
+    assets=ROOT/'assets'
+    frames=[]
+    command=['ffmpeg','-y','-loglevel','error','-f','rawvideo','-pix_fmt','rgb24','-s',f'{W}x{H}','-r',str(FPS),'-i','-','-an','-c:v','libx264','-crf','18','-pix_fmt','yuv420p','-movflags','+faststart',str(assets/'jarvis-core.mp4')]
+    proc=subprocess.Popen(command,stdin=subprocess.PIPE)
+    try:
+        for i in range(COUNT):
+            frame=render(i)
+            frames.append(frame)
+            proc.stdin.write(frame.tobytes())
+            if i%60==0: print(f'Rendered {i}/{COUNT}',flush=True)
+    finally:
+        proc.stdin.close()
+    if proc.wait()!=0: raise RuntimeError('FFmpeg encoding failed')
+    frames[0].save(assets/'jarvis-poster.png')
+    # Millisecond timestamps alternate 17/16/17 ms: exactly 4 seconds at 60 fps.
+    durations=[round((i+1)*1000/FPS)-round(i*1000/FPS) for i in range(COUNT)]
+    frames[0].save(assets/'jarvis-core.webp',save_all=True,append_images=frames[1:],duration=durations,loop=0,quality=88,method=4)
+    print('Built 60 fps WebP, MP4 and static poster.',flush=True)

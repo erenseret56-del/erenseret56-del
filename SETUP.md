@@ -27,9 +27,19 @@ The daily schedule is 00:17 UTC / 05:47 India time, subject to GitHub scheduling
 
 ## Updating hero motion
 
-The current hero is `assets/jarvis-core.gif`: a 4-second seamless Blender/Eevee render with metallic gimbals, transmissive glass, a cyan energy core, moving scan rails and floating particle geometry. It is designed for GitHub's image rendering limits and loops automatically.
+The profile hero is `assets/jarvis-core.webp`: a seamless 4-second HUD loop with 240 frames. Thin scanning arcs, an inner iris and orbiting data points replace the former mechanical orb. `assets/jarvis-core.mp4` is the H.264 60 fps video; `assets/jarvis-poster.png` is the still alternative linked below the hero. Actual image playback cadence depends on the browser and device.
 
-To regenerate the core, run Blender with `scripts/build-jarvis-core.py`, then composite the resulting frames into the GIF. The interactive Three.js experience is in `interactive/index.html` and is live at `https://erenseret56-del.github.io/erenseret56-del/`; it provides mouse rotation and a static fallback when WebGL is unavailable. SVG project cards can be rebuilt with `python scripts/build-cards.py`; keep their accessible descriptions in the README in sync.
+Rebuild from the repository root:
+
+```sh
+python -m pip install -r scripts/requirements-render.txt
+python scripts/build-jarvis-core.py
+python scripts/validate.py
+```
+
+FFmpeg must be on PATH. The renderer uses Segoe UI / Consolas on Windows or DejaVu Sans / DejaVu Sans Mono on Linux. All 240 frames are generated from periodic functions; the endpoint is excluded so the loop has no duplicated pause frame. WebP durations alternate 17/16/17 milliseconds to total exactly 4,000 milliseconds. The video has a constant 60 fps timebase. Rendering requires approximately 500 MB of free memory for the image sequence.
+
+The earlier Three.js demo in `interactive/` is retained as a separate experiment. The README now links directly to the new video and still image. Rebuild project cards with `python scripts/build-cards.py`.
 
 ## Inputs still needed
 
