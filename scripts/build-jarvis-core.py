@@ -18,11 +18,23 @@ def font(size, mono=False):
 
 FONTS = {(s, m): font(s, m) for s, m in [(9,True),(10,True),(11,True),(12,True),(14,True),(18,False),(48,False),(56,False)]}
 
+def bold_font(size):
+    names = ['C:/Windows/Fonts/consolab.ttf', '/usr/share/fonts/truetype/dejavu/DejaVuSansMono-Bold.ttf']
+    for name in names:
+        if Path(name).exists():
+            return ImageFont.truetype(name, size * SCALE)
+    return FONTS[size, True]
+
+BOLD_FONTS = {size: bold_font(size) for size in (10, 11)}
+
 def line(d, points, fill, width=1):
     d.line([(int(x*SCALE),int(y*SCALE)) for x,y in points], fill=fill, width=max(1,round(width*SCALE)))
 
 def text(d, xy, value, size=11, fill=MUTED, mono=True):
     d.text((xy[0]*SCALE,xy[1]*SCALE), value, font=FONTS[size,mono], fill=fill)
+
+def bold_text(d, xy, value, size=11, fill=MUTED):
+    d.text((xy[0]*SCALE,xy[1]*SCALE), value, font=BOLD_FONTS[size], fill=fill)
 
 def arc(d, r, start, end, fill, width=1, center=(747,279)):
     x,y=center
@@ -71,10 +83,10 @@ def draw_connection(draw, glow_draw, points, progress, opacity):
         glow_draw.ellipse(((x-radius*2)*SCALE, (y-radius*2)*SCALE, (x+radius*2)*SCALE, (y+radius*2)*SCALE), fill=glow_colour)
 
 CONNECTIONS = [
-    ((685,194), (615,116), (535,116), (300,84),  'CONNECTION 01  /  FULL STACK DEVELOPMENT', 'React.js / Next.js / Node.js / TypeScript', .11),
-    ((670,242), (610,202), (535,202), (300,170), 'CONNECTION 02  /  AI AGENT ENGINEERING',    'OpenAI / Gemini / LLMs / AI Agents',        .25),
-    ((671,287), (610,315), (535,315), (300,283), 'CONNECTION 03  /  VOICE AI & AUTOMATION',  'Retell AI / ElevenLabs / Twilio / n8n',     .39),
-    ((685,326), (618,404), (535,404), (300,372), 'CONNECTION 04  /  CLOUD & INFRASTRUCTURE', 'AWS / Hostinger VPS / Vercel / Netlify',   .53),
+    ((685,194), (615,116), (535,116), (275,82),  'CONNECTION 01  /  FULL STACK DEVELOPMENT', 'React.js / Next.js / Node.js / TypeScript', .11),
+    ((670,242), (610,202), (535,202), (275,136), 'CONNECTION 02  /  AI AGENT ENGINEERING',    'OpenAI / Gemini / LLMs / AI Agents',        .25),
+    ((671,287), (610,315), (535,315), (275,281), 'CONNECTION 03  /  VOICE AI & AUTOMATION',  'Retell AI / ElevenLabs / Twilio / n8n',     .39),
+    ((685,326), (618,404), (535,404), (275,370), 'CONNECTION 04  /  CLOUD & INFRASTRUCTURE', 'AWS / Hostinger VPS / Vercel / Netlify',   .53),
 ]
 
 base = Image.new('RGB',(W*SCALE,H*SCALE),'#050a10')
@@ -176,10 +188,10 @@ def render(index):
         draw_connection(d, gd, (points_start, elbow, endpoint), line_progress, line_opacity)
         label_opacity = sequence_fade * clamp((t-(delay+.11))/.06)
         if label_opacity:
-            heading_colour = mix((0,0,0), (124,234,240), label_opacity)
-            detail_colour = mix((0,0,0), (131,172,186), label_opacity)
-            text(d, label_at, heading, 9, heading_colour)
-            text(d, (label_at[0], label_at[1]+14), detail, 9, detail_colour)
+            heading_colour = mix((0,0,0), (183,250,253), label_opacity)
+            detail_colour = mix((0,0,0), (176,220,231), label_opacity)
+            bold_text(d, label_at, heading, 11, heading_colour)
+            text(d, (label_at[0], label_at[1]+15), detail, 10, detail_colour)
         # A small emissive pulse repeatedly travels from the core to the endpoint after reveal.
         if line_progress > .98:
             pulse = ((t-(delay+.24))*2.4) % 1
