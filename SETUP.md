@@ -41,6 +41,14 @@ FFmpeg must be on PATH. The renderer uses Segoe UI / Consolas on Windows or Deja
 
 The earlier Three.js demo in `interactive/` is retained as a separate experiment. The README now links directly to the new video and still image. Rebuild project cards with `python scripts/build-cards.py`.
 
+## Updating identity motion
+
+`assets/identity-card.webp` is a four-second, seamless 60 fps scanner interface for the Identity section. It uses moving arcs, orbiting data points, a pulsing monogram and a scan beam, which GitHub can show inline without unsupported README JavaScript.
+
+```sh
+python scripts/build-identity-card.py
+```
+
 ## Inputs still needed
 
 | Item | Needed |
