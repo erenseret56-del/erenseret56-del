@@ -1,4 +1,4 @@
-﻿"""Render the profile HUD: Pillow + FFmpeg, 240 frames / 4 seconds / 60 fps."""
+"""Render the profile HUD: Pillow + FFmpeg, 240 frames / 4 seconds / 60 fps."""
 from pathlib import Path
 import math
 import subprocess
@@ -72,8 +72,6 @@ for a in [0,math.pi/2,math.pi,3*math.pi/2]:
 for side in [-1,1]:
     x=747+side*205
     line(bd,[(x,260),(x,298)],'#2b5360')
-text(bd,(718,261),'J.A.R.V.I.S',10,WHITE)
-text(bd,(722,281),'CORE / 01',10,CYAN)
 
 
 def render(index):
