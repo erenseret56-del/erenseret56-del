@@ -33,9 +33,11 @@ approach:   Hands-on development with tool-assisted workflows
 
 I’m Sai, a developer based in Hyderabad, studying Computer Science Engineering at MLR Institute of Technology and working at **Peoplix**.
 
-I build across frontend, backend and interface design, using development tools to turn ideas into working products. My projects explore AI assistants, voice interaction, digital platforms and clinical synthetic data.
+I build full-stack applications, AI-powered products, intelligent voice agents and automated workflows. My work spans frontend engineering, backend development, UI/UX design, AI integrations, cloud infrastructure and 3D web experiences.
 
-**Design with intent. Build with focus. Keep improving.**
+I use React, Next.js, Node.js, Python, Supabase, MongoDB and Three.js to turn ideas into functional products. I also work with Retell AI, ElevenLabs, Twilio and n8n for conversational AI, voice automation and workflow orchestration.
+
+**Design with intent. Build with focus. Automate intelligently. Keep improving.**
 
 ## 03 / Toolkit
 
@@ -49,6 +51,9 @@ Technologies I’ve worked with through hands-on, tool-assisted development. The
 | **Programming** | <img src="https://skillicons.dev/icons?i=python,java&amp;theme=dark" alt="Python and Java" width="96" /><br>Python · Java |
 | **Tools & platforms** | <img src="https://skillicons.dev/icons?i=git,github,vscode,figma,vercel,netlify&amp;theme=dark&amp;perline=3" alt="Git, GitHub, VS Code, Figma, Vercel, Netlify" width="146" /><br>Git · GitHub · VS Code<br>Figma · Vercel · Netlify |
 | **Mobile & 3D** | <img src="https://skillicons.dev/icons?i=react,threejs&amp;theme=dark" alt="React ecosystem and Three.js; Expo listed below" width="96" /><br>React Native · Expo · Three.js |
+
+| **AI, voice & automation** | Retell AI · ElevenLabs · Twilio · n8n<br>Conversational AI · Voice agents · Workflow automation |
+| **Cloud infrastructure** | Cloud deployment · Application infrastructure · Automation workflows |
 
 ## 04 / Selected builds
 
