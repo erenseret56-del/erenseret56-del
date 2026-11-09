@@ -5,7 +5,7 @@ import subprocess
 from PIL import Image, ImageDraw, ImageFont, ImageFilter, ImageOps
 
 ROOT = Path(__file__).resolve().parents[1]
-W, H, SCALE, FPS, COUNT = 1000, 560, 2, 60, 240
+W, H, SCALE, FPS, COUNT = 1000, 560, 1, 60, 240
 CYAN, WHITE, MUTED = '#75e6ed', '#e0edf0', '#6e929f'
 
 def font(size, mono=False):
@@ -16,7 +16,7 @@ def font(size, mono=False):
             return ImageFont.truetype(name, size * SCALE)
     raise RuntimeError('Install DejaVu Sans or Segoe UI fonts to render the hero.')
 
-FONTS = {(s, m): font(s, m) for s, m in [(10,True),(11,True),(12,True),(14,True),(18,False),(48,False),(56,False)]}
+FONTS = {(s, m): font(s, m) for s, m in [(9,True),(10,True),(11,True),(12,True),(14,True),(18,False),(48,False),(56,False)]}
 
 def line(d, points, fill, width=1):
     d.line([(int(x*SCALE),int(y*SCALE)) for x,y in points], fill=fill, width=max(1,round(width*SCALE)))
@@ -30,6 +30,52 @@ def arc(d, r, start, end, fill, width=1, center=(747,279)):
 
 def polar(r,a):
     return (747+r*math.cos(a),279+r*math.sin(a))
+
+def clamp(value):
+    return max(0, min(1, value))
+
+def mix(a, b, amount):
+    return tuple(round(start + (end-start)*amount) for start, end in zip(a, b))
+
+def point_on_polyline(points, progress):
+    lengths = [math.dist(a, b) for a, b in zip(points, points[1:])]
+    remaining = sum(lengths) * progress
+    for start, end, length in zip(points, points[1:], lengths):
+        if remaining <= length:
+            ratio = remaining / length if length else 0
+            return (start[0] + (end[0]-start[0])*ratio, start[1] + (end[1]-start[1])*ratio)
+        remaining -= length
+    return points[-1]
+
+def draw_connection(draw, glow_draw, points, progress, opacity):
+    if progress <= 0 or opacity <= 0:
+        return
+    visible = [points[0]]
+    lengths = [math.dist(a, b) for a, b in zip(points, points[1:])]
+    distance = sum(lengths) * progress
+    for start, end, length in zip(points, points[1:], lengths):
+        if distance >= length:
+            visible.append(end)
+            distance -= length
+        else:
+            visible.append((start[0] + (end[0]-start[0])*(distance/length), start[1] + (end[1]-start[1])*(distance/length)))
+            break
+    colour = mix((0, 0, 0), (104, 237, 244), opacity)
+    glow_colour = mix((0, 0, 0), (23, 123, 143), opacity)
+    line(draw, visible, colour, 1.25)
+    line(glow_draw, visible, glow_colour, 4)
+    if progress > .96:
+        x, y = points[-1]
+        radius = 2.3
+        draw.ellipse(((x-radius)*SCALE, (y-radius)*SCALE, (x+radius)*SCALE, (y+radius)*SCALE), fill=colour)
+        glow_draw.ellipse(((x-radius*2)*SCALE, (y-radius*2)*SCALE, (x+radius*2)*SCALE, (y+radius*2)*SCALE), fill=glow_colour)
+
+CONNECTIONS = [
+    ((685,194), (615,116), (535,116), (300,84),  'CONNECTION 01  /  FULL STACK DEVELOPMENT', 'React.js / Next.js / Node.js / TypeScript', .11),
+    ((670,242), (610,202), (535,202), (300,170), 'CONNECTION 02  /  AI AGENT ENGINEERING',    'OpenAI / Gemini / LLMs / AI Agents',        .25),
+    ((671,287), (610,315), (535,315), (300,283), 'CONNECTION 03  /  VOICE AI & AUTOMATION',  'Retell AI / ElevenLabs / Twilio / n8n',     .39),
+    ((685,326), (618,404), (535,404), (300,372), 'CONNECTION 04  /  CLOUD & INFRASTRUCTURE', 'AWS / Hostinger VPS / Vercel / Netlify',   .53),
+]
 
 base = Image.new('RGB',(W*SCALE,H*SCALE),'#050a10')
 bd=ImageDraw.Draw(base)
@@ -113,26 +159,56 @@ def render(index):
         a=t*math.tau+i*math.tau/6
         x,y=polar(193,a)
         d.ellipse(((x-1)*SCALE,(y-1)*SCALE,(x+1)*SCALE,(y+1)*SCALE),fill=WHITE)
+    # Four staged technical callouts originate at the core, then settle into a calm pulse loop.
+    # The last phase fades away before frame zero so the WebP loop has no abrupt reset.
+    sequence_fade = 1 if t < .88 else clamp((1-t)/.12)
+    activation = clamp(t/.10) * sequence_fade
+    core_radius = 71 + math.sin(t*math.tau*2)*3
+    d.ellipse(((747-core_radius)*SCALE, (279-core_radius)*SCALE,
+               (747+core_radius)*SCALE, (279+core_radius)*SCALE),
+              outline=mix((0,0,0), (64,206,226), activation), width=max(1, round(SCALE)))
+    gd.ellipse(((747-core_radius)*SCALE, (279-core_radius)*SCALE,
+                (747+core_radius)*SCALE, (279+core_radius)*SCALE),
+               outline=mix((0,0,0), (18,105,128), activation), width=5*SCALE)
+    for points_start, elbow, endpoint, label_at, heading, detail, delay in CONNECTIONS:
+        line_progress = clamp((t-delay)/.13)
+        line_opacity = sequence_fade * clamp((t-delay)/.05)
+        draw_connection(d, gd, (points_start, elbow, endpoint), line_progress, line_opacity)
+        label_opacity = sequence_fade * clamp((t-(delay+.11))/.06)
+        if label_opacity:
+            heading_colour = mix((0,0,0), (124,234,240), label_opacity)
+            detail_colour = mix((0,0,0), (131,172,186), label_opacity)
+            text(d, label_at, heading, 9, heading_colour)
+            text(d, (label_at[0], label_at[1]+14), detail, 9, detail_colour)
+        # A small emissive pulse repeatedly travels from the core to the endpoint after reveal.
+        if line_progress > .98:
+            pulse = ((t-(delay+.24))*2.4) % 1
+            x, y = point_on_polyline((points_start, elbow, endpoint), pulse)
+            radius = 1.7
+            d.ellipse(((x-radius)*SCALE, (y-radius)*SCALE, (x+radius)*SCALE, (y+radius)*SCALE), fill=(213,255,255))
+            gd.ellipse(((x-radius*2)*SCALE, (y-radius*2)*SCALE, (x+radius*2)*SCALE, (y+radius*2)*SCALE), fill=(37,142,158))
     from PIL import ImageChops
     im=ImageChops.add(im,glow.filter(ImageFilter.GaussianBlur(5*SCALE)))
     return im.resize((W,H),Image.Resampling.LANCZOS)
 
 if __name__=='__main__':
     assets=ROOT/'assets'
-    frames=[]
-    command=['ffmpeg','-y','-loglevel','error','-f','rawvideo','-pix_fmt','rgb24','-s',f'{W}x{H}','-r',str(FPS),'-i','-','-an','-c:v','libx264','-crf','18','-pix_fmt','yuv420p','-movflags','+faststart',str(assets/'jarvis-core.mp4')]
-    proc=subprocess.Popen(command,stdin=subprocess.PIPE)
+    source=['ffmpeg','-y','-loglevel','error','-f','rawvideo','-pix_fmt','rgb24','-s',f'{W}x{H}','-r',str(FPS),'-i','-','-an']
+    mp4_proc=subprocess.Popen(source + ['-c:v','libx264','-crf','18','-pix_fmt','yuv420p','-movflags','+faststart',str(assets/'jarvis-core.mp4')], stdin=subprocess.PIPE)
+    webp_proc=subprocess.Popen(source + ['-c:v','libwebp_anim','-q:v','82','-loop','0',str(assets/'jarvis-core.webp')], stdin=subprocess.PIPE)
+    first_frame=None
     try:
         for i in range(COUNT):
             frame=render(i)
-            frames.append(frame)
-            proc.stdin.write(frame.tobytes())
+            if i == 0:
+                first_frame=frame
+            raw_frame=frame.tobytes()
+            mp4_proc.stdin.write(raw_frame)
+            webp_proc.stdin.write(raw_frame)
             if i%60==0: print(f'Rendered {i}/{COUNT}',flush=True)
     finally:
-        proc.stdin.close()
-    if proc.wait()!=0: raise RuntimeError('FFmpeg encoding failed')
-    frames[0].save(assets/'jarvis-poster.png')
-    # Millisecond timestamps alternate 17/16/17 ms: exactly 4 seconds at 60 fps.
-    durations=[round((i+1)*1000/FPS)-round(i*1000/FPS) for i in range(COUNT)]
-    frames[0].save(assets/'jarvis-core.webp',save_all=True,append_images=frames[1:],duration=durations,loop=0,quality=88,method=4)
+        mp4_proc.stdin.close()
+        webp_proc.stdin.close()
+    if mp4_proc.wait()!=0 or webp_proc.wait()!=0: raise RuntimeError('FFmpeg encoding failed')
+    render(int(COUNT*.72)).save(assets/'jarvis-poster.png')
     print('Built 60 fps WebP, MP4 and static poster.',flush=True)

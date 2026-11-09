@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/jarvis-core.webp" width="100%" alt="Sai Ruthvik Reddy — Full Stack Developer. A cinematic cyan HUD with fine concentric scan rings and a seamless 60 fps animation." />
+  <img src="assets/jarvis-core.webp" width="100%" alt="Sai Ruthvik Reddy — Full Stack Developer. A cinematic cyan HUD with a holographic AI core, rotating scan rings, and four animated engineering callouts extending to the left." />
 </p>
 
 ## 01 / Identity
