@@ -13,7 +13,6 @@
 
 ## 01 / Identity
 
-<!-- Legacy static identity details retained in source for reference.
 ```yaml
 sai@dev:~$ whoami
 
@@ -29,11 +28,6 @@ toolkit:    React · TypeScript · Node.js · Python · Figma
 status:     Working at Peoplix
 approach:   Hands-on development with tool-assisted workflows
 ```
--->
-
-<p align="center">
-  <img src="assets/identity-card.webp" width="100%" alt="Animated identity interface for Sai Ruthvik Reddy: full stack developer, UI/UX enthusiast, and builder based in Hyderabad, India." />
-</p>
 
 ## 02 / About me
 

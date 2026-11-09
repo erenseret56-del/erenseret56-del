@@ -11,7 +11,7 @@ root = Path(__file__).resolve().parents[1]
 readme = (root / 'README.md').read_text(encoding='utf-8')
 sources = re.findall(r'src="([^"]+)"', readme)
 local = [s for s in sources if not s.startswith('https://')]
-assert len(local) == 11, local
+assert len(local) == 10, local
 assert all((root / s).is_file() for s in local)
 for path in (root / 'assets').glob('*.svg'):
     ET.parse(path)
